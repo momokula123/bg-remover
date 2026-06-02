@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+outputs/
+inputs/
+models/
+img/pixel-art-api/
+img/pixel-art/nobg/
+img/pixel-art/raw/
+*.onnx

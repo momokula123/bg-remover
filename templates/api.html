@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 文档 - 图片背景移除</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+            background: #0f0f1a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .wrap { max-width: 900px; margin: 0 auto; }
+        h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #6ee7b7, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .subtitle { color: #888; margin-bottom: 30px; }
+        .nav { margin-bottom: 30px; }
+        .nav a { color: #6ee7b7; text-decoration: none; margin-right: 16px; font-size: 0.9rem; }
+
+        .endpoint {
+            background: #1a1a2e;
+            border: 1px solid #2a2a3e;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .method {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+        .method.get { background: #10b981; color: white; }
+        .method.post { background: #3b82f6; color: white; }
+        .path {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+        .desc { color: #888; margin: 8px 0 16px; font-size: 0.9rem; }
+
+        .section-label {
+            color: #6ee7b7;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin: 16px 0 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        pre {
+            background: #0f0f1a;
+            border: 1px solid #2a2a3e;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #c9d1d9;
+        }
+        .key { color: #79c0ff; }
+        .str { color: #a5d6ff; }
+        .bool { color: #ff7b72; }
+        .num { color: #ffa657; }
+        .comment { color: #555; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8px 0 16px;
+            font-size: 0.85rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px 12px;
+            border-bottom: 1px solid #2a2a3e;
+        }
+        th { color: #888; font-weight: 600; }
+        td { color: #ccc; }
+        code {
+            background: rgba(59,130,246,0.15);
+            color: #93c5fd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.82rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <h1>API 文档</h1>
+        <p class="subtitle">图片背景移除 HTTP API — 可集成到任何应用</p>
+        <div class="nav">
+            <a href="/">🏠 Web UI</a>
+            <a href="http://127.0.0.1:5001" target="_blank">🤖 AI Agent</a>
+            <a href="/api">📄 API 文档</a>
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <span class="path">/api/health</span>
+            <p class="desc">健康检查，返回服务状态和模型信息</p>
+            <div class="section-label">Response</div>
+<pre>{
+  <span class="key">"status"</span>: <span class="str">"ok"</span>,
+  <span class="key">"models"</span>: {
+    <span class="key">"birefnet-massive"</span>: <span class="bool">true</span>,
+    <span class="key">"bria-rmbg"</span>: <span class="bool">true</span>
+  },
+  <span class="key">"loaded_sessions"</span>: [<span class="str">"birefnet-massive"</span>]
+}</pre>
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <span class="path">/api/models</span>
+            <p class="desc">获取可用模型列表</p>
+            <div class="section-label">Response</div>
+<pre>{
+  <span class="key">"models"</span>: [
+    {
+      <span class="key">"id"</span>: <span class="str">"birefnet-massive"</span>,
+      <span class="key">"name"</span>: <span class="str">"BiRefNet-Massive (最强)"</span>,
+      <span class="key">"desc"</span>: <span class="str">"最大最强模型..."</span>,
+      <span class="key">"quality"</span>: <span class="num">5</span>,
+      <span class="key">"speed"</span>: <span class="num">1</span>,
+      <span class="key">"downloaded"</span>: <span class="bool">true</span>,
+      <span class="key">"file_size"</span>: <span class="num">972666916</span>
+    },
+    ...
+  ],
+  <span class="key">"default"</span>: <span class="str">"birefnet-massive"</span>
+}</pre>
+        </div>
+
+        <div class="endpoint">
+            <span class="method post">POST</span>
+            <span class="path">/api/remove</span>
+            <p class="desc">上传图片移除背景，返回 JSON（含 base64 图片数据）</p>
+            <div class="section-label">请求参数 (multipart/form-data)</div>
+            <table>
+                <tr><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr>
+                <tr><td><code>image</code></td><td>file</td><td>✅</td><td>图片文件 (PNG/JPG/WebP/BMP/TIFF)</td></tr>
+                <tr><td><code>model</code></td><td>string</td><td>❌</td><td>模型ID，默认 <code>birefnet-massive</code></td></tr>
+            </table>
+            <div class="section-label">可选 model 值</div>
+            <table>
+                <tr><th>值</th><th>说明</th></tr>
+                <tr><td><code>birefnet-massive</code></td><td>最强模型（默认）</td></tr>
+                <tr><td><code>bria-rmbg</code></td><td>商业级模型，速度更快</td></tr>
+            </table>
+            <div class="section-label">Response (成功)</div>
+<pre>{
+  <span class="key">"success"</span>: <span class="bool">true</span>,
+  <span class="key">"image"</span>: <span class="str">"data:image/png;base64,iVBORw0KGgo..."</span>,
+  <span class="key">"filename"</span>: <span class="str">"a1b2c3d4_nobg.png"</span>,
+  <span class="key">"download_url"</span>: <span class="str">"/api/download/a1b2c3d4_nobg.png"</span>,
+  <span class="key">"model"</span>: <span class="str">"birefnet-massive"</span>,
+  <span class="key">"model_name"</span>: <span class="str">"BiRefNet-Massive (最强)"</span>,
+  <span class="key">"elapsed_seconds"</span>: <span class="num">3.52</span>,
+  <span class="key">"original_size"</span>: [<span class="num">1920</span>, <span class="num">1080</span>]
+}</pre>
+            <div class="section-label">cURL 示例</div>
+<pre>curl -X POST http://127.0.0.1:5000/api/remove \
+  -F "image=@photo.png" \
+  -F "model=birefnet-massive"</pre>
+        </div>
+
+        <div class="endpoint">
+            <span class="method post">POST</span>
+            <span class="path">/api/remove/file</span>
+            <p class="desc">上传图片移除背景，直接返回 PNG 文件流（适合程序调用）</p>
+            <div class="section-label">请求参数 (multipart/form-data)</div>
+            <table>
+                <tr><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr>
+                <tr><td><code>image</code></td><td>file</td><td>✅</td><td>图片文件</td></tr>
+                <tr><td><code>model</code></td><td>string</td><td>❌</td><td>模型ID，默认 <code>birefnet-massive</code></td></tr>
+            </table>
+            <div class="section-label">Response</div>
+            <p class="desc">直接返回 <code>image/png</code> 二进制流，Content-Type: image/png</p>
+            <div class="section-label">cURL 示例</div>
+<pre>curl -X POST http://127.0.0.1:5000/api/remove/file \
+  -F "image=@photo.png" \
+  -o result_nobg.png</pre>
+            <div class="section-label">Python 示例</div>
+<pre><span class="comment"># 使用 /api/remove (返回 JSON + base64)</span>
+<span class="key">import</span> requests
+
+<span class="key">with</span> open(<span class="str">"photo.png"</span>, <span class="str">"rb"</span>) <span class="key">as</span> f:
+    resp = requests.post(
+        <span class="str">"http://127.0.0.1:5000/api/remove"</span>,
+        files={<span class="str">"image"</span>: f},
+        data={<span class="str">"model"</span>: <span class="str">"birefnet-massive"</span>}
+    )
+result = resp.json()
+<span class="key">if</span> result[<span class="str">"success"</span>]:
+    <span class="key">import</span> base64
+    img_data = base64.b64decode(result[<span class="str">"image"</span>].split(<span class="str">","</span>)[<span class="num">1</span>])
+    <span class="key">with</span> open(<span class="str">"result.png"</span>, <span class="str">"wb"</span>) <span class="key">as</span> out:
+        out.write(img_data)
+    print(<span class="str">f"完成! 耗时: {result['elapsed_seconds']}s"</span>)
+
+<span class="comment"># 使用 /api/remove/file (直接返回文件)</span>
+<span class="key">with</span> open(<span class="str">"photo.png"</span>, <span class="str">"rb"</span>) <span class="key">as</span> f:
+    resp = requests.post(
+        <span class="str">"http://127.0.0.1:5000/api/remove/file"</span>,
+        files={<span class="str">"image"</span>: f},
+        data={<span class="str">"model"</span>: <span class="str">"bria-rmbg"</span>}
+    )
+<span class="key">with</span> open(<span class="str">"result.png"</span>, <span class="str">"wb"</span>) <span class="key">as</span> out:
+    out.write(resp.content)</pre>
+        </div>
+
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <span class="path">/api/download/{filename}</span>
+            <p class="desc">下载已处理的结果文件</p>
+            <div class="section-label">URL 参数</div>
+            <table>
+                <tr><th>参数</th><th>说明</th></tr>
+                <tr><td><code>filename</code></td><td>处理结果返回的文件名，如 <code>a1b2c3d4_nobg.png</code></td></tr>
+            </table>
+            <div class="section-label">cURL 示例</div>
+<pre>curl -O http://127.0.0.1:5000/api/download/a1b2c3d4_nobg.png</pre>
+        </div>
+    </div>
+</body>
+</html>
