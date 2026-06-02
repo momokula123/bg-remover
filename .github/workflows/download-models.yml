@@ -1,0 +1,53 @@
+name: Download ONNX Models
+
+on:
+  workflow_dispatch:
+
+jobs:
+  download-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Setup Git LFS
+        run: |
+          git lfs install
+          git lfs track "*.onnx"
+
+      - name: Create models directory
+        run: mkdir -p models
+
+      - name: Download birefnet-massive.onnx
+        run: |
+          curl -L -o models/birefnet-massive.onnx \
+            "https://github.com/danielgatis/rembg/releases/download/v0.0.0/BiRefNet-massive-TR_DIS5K_TR_TEs-epoch_420.onnx"
+
+      - name: Download bria-rmbg.onnx
+        run: |
+          curl -L -o models/bria-rmbg.onnx \
+            "https://github.com/danielgatis/rembg/releases/download/v0.0.0/bria-rmbg-2.0.onnx"
+
+      - name: Verify downloads
+        run: |
+          ls -lh models/
+          echo "birefnet-massive.onnx size: $(stat --format=%s models/birefnet-massive.onnx) bytes"
+          echo "bria-rmbg.onnx size: $(stat --format=%s models/bria-rmbg.onnx) bytes"
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and push models
+        run: |
+          git add .gitattributes models/
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: add ONNX models via GitHub Actions"
+            git push
+          fi
