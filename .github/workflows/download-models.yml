@@ -44,7 +44,7 @@ jobs:
 
       - name: Commit and push models
         run: |
-          git add .gitattributes models/
+          git add -f .gitattributes models/
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
