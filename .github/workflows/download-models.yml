@@ -3,6 +3,9 @@ name: Download ONNX Models
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   download-and-commit:
     runs-on: ubuntu-latest
